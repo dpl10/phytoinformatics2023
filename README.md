@@ -27,4 +27,7 @@ The Graduate Center, City University of New York & New York Botanical Garden
 * week 6: 
    * [lecture](phytoinformatics2023-week06.pdf)
    * [laboratory](phytoinformatics2023-lab06.pdf)
-   <!-- * [extractBLAST.py](extractBLAST.py) -->
+   * [extractBLAST.py](extractBLAST.py)
+* week 7: 
+   * [lecture](phytoinformatics2023-week07.pdf)
+   * [laboratory](phytoinformatics2023-lab07.pdf)
