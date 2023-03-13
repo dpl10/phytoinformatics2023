@@ -35,6 +35,8 @@ def wrap(string, columns = WRAP):
 def nullPrint(*args, **kwargs):
 	print(*args, end = '\0', **kwargs)
 
+
+
 ### USER SETTINGS
 settings = {}
 settings['gene'] = ''
@@ -50,8 +52,9 @@ except getopt.error as err:
 	sys.exit(2)
 for argument, value in arguments:
 	if argument in ('-g', '--gene'):
-		gene = '^gene\t' + re.escape(value) + '$'
-		settings['gene'] = re.compile(gene)
+		# gene = '^gene\t' + re.escape(value) + '$'
+		# settings['gene'] = re.compile(gene)
+		settings['gene'] = re.compile('^gene\t' + re.escape(value) + '$')
 	elif argument in ('-h', '--help'):
 		eprintWrap('A Python3 script for filtering EDirect e-utilities feature tables (ft) for a particular gene.')
 		eprintWrap("The script is designed to be used in a search pipeline: esearch -db nuccore -query <query> | efetch -format ft | ftFilter.py -g <gene> | xargs -0 -I {} -P 1 bash -c 'ACCESSION=$(echo \"{}\" | awk \"{print \$1}\"); START=$(echo \"{}\" | awk \"{print \$2}\"); STOP=$(echo \"{}\" | awk \"{print \$3}\"); esearch -db nuccore -query \"$ACCESSION\" | efetch -format fasta -seq_start $START -seq_stop $STOP'")
@@ -81,12 +84,6 @@ def output(definition, table):
 				start, stop, cds = tableLines[k-1].split('\t')
 				nullPrint(f"{definitionWords[1]}[ACCESSION] {start} {stop}")
 				break
-
-def testWords(words, index, value):
-	try:
-		return words[index] == value
-	except IndexError:
-		return False
 
 
 
