@@ -34,3 +34,9 @@ The Graduate Center, City University of New York & New York Botanical Garden
 * week 8: 
    * [lecture](phytoinformatics2023-week08.pdf)
    * [laboratory](phytoinformatics2023-lab08.pdf)
+   * [alan](https://github.com/mpdunne/alan/blob/master/alan) 
+   * [ftFilter.py](ftFilter.py)
+   * [GenBank2fasta.py](GenBank2fasta.py)
+   * [pairs.py](pairs.py)
+   * [selectFromFASTA.py](selectFromFASTA.py) 
+   * [translatorX.pl](translatorX.pl) ([Abascal et al. 2010](http://dx.doi.org/10.1093/nar/gkq291))
