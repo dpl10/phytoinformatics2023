@@ -52,8 +52,6 @@ except getopt.error as err:
 	sys.exit(2)
 for argument, value in arguments:
 	if argument in ('-g', '--gene'):
-		# gene = '^gene\t' + re.escape(value) + '$'
-		# settings['gene'] = re.compile(gene)
 		settings['gene'] = re.compile('^gene\t' + re.escape(value) + '$')
 	elif argument in ('-h', '--help'):
 		eprintWrap('A Python3 script for filtering EDirect e-utilities feature tables (ft) for a particular gene.')
