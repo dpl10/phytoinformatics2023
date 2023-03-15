@@ -40,3 +40,6 @@ The Graduate Center, City University of New York & New York Botanical Garden
    * [pairs.py](pairs.py)
    * [selectFromFASTA.py](selectFromFASTA.py) 
    * [translatorX.pl](translatorX.pl) ([Abascal et al. 2010](http://dx.doi.org/10.1093/nar/gkq291))
+* week 9: 
+   * [lecture](phytoinformatics2023-week09.pdf)
+   * [laboratory](phytoinformatics2023-lab09.pdf)
