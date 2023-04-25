@@ -53,3 +53,10 @@ The Graduate Center, City University of New York & New York Botanical Garden
 * week 12: 
    * [lecture](phytoinformatics2023-week12.pdf)
    * [laboratory](phytoinformatics2023-lab12.pdf)
+* week 13: 
+   * [lecture](phytoinformatics2023-week13.pdf)
+   * [laboratory](phytoinformatics2023-lab13.pdf)
+   * [firenet.py](firenet.py)
+   * North American *Acer* data [part 0](NA-Acer-data0.tar) | [part 1](NA-Acer-data1.tar) | [part 2](NA-Acer-data2.tar) | [part 3](NA-Acer-data3.tar)
+   * [testImages.py](testImages.py)
+   * [trainImages.py](trainImages.py)
