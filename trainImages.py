@@ -416,11 +416,11 @@ clr = tfa.optimizers.CyclicalLearningRate(
 	step_size = settings['clrStep']*settings['batch'] 
 )
 optimizer = None
-if settings['lossFunction'] in ('ce+clr+a', 'n+clr+a'):
+if settings['lossFunction'] == 'ce+clr+a':
 	optimizer = tf.keras.optimizers.Adam(
 		learning_rate = clr
 	)
-elif settings['lossFunction'] in ('ce+clr+aw', 'n+clr+aw'):
+elif settings['lossFunction'] == 'ce+clr+aw':
 	optimizer = tfa.optimizers.AdamW(
 		learning_rate = clr,
 		weight_decay = settings['weightDecay']
@@ -430,7 +430,7 @@ elif settings['lossFunction'] == 'ce+ed+aw':
 		learning_rate = settings['learningRate'], 
 		weight_decay = settings['weightDecay']
 	)
-elif settings['lossFunction'] in ('ce+clr+sgd', 'n+clr+sgd'):
+elif settings['lossFunction'] == 'ce+clr+sgd':
 	optimizer = tf.keras.optimizers.SGD(
 		learning_rate = clr
 	)
