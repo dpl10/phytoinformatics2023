@@ -16,7 +16,7 @@ import textwrap
 
 
 ### CONSTANTS
-LOSSES = ('mae+clr+a', 'mae+clr+aw', 'mae+ed+aw', 'mae+clr+sgd', 'mse+clr+a', 'mse+clr+aw', 'mse+ed+aw', 'mse+clr+sgd')
+LOSSES = ('lc+clr+a', 'lc+clr+aw', 'lc+ed+aw', 'lc+clr+sgd', 'mse+clr+a', 'mse+clr+aw', 'mse+ed+aw', 'mse+clr+sgd')
 WRAP = shutil.get_terminal_size().columns
 
 
@@ -101,7 +101,7 @@ for argument, value in arguments:
 		eprintWrap(f"CPU only (optional; default = {not settings['cpu']}): -c | --cpu")
 		eprintWrap(f"Weight decay for AdamW optimizer (optional; default = {settings['weightDecay']}): -d float | --decay=float")
 		eprintWrap(f"Number of epochs (optional; default = {settings['epochs']}): -e int | --epochs=int")
-		eprintWrap(f"Loss, learning rate, and optimization function combination (optional; a = adam; aw = adamW; clr = cyclical learning rate; ed = epoch decay; mae = mean absolute error; mse = mean squared error; sgd = stochastic gradient descent; default = {settings['lossFunction']}): -f {'|'.join(LOSSES)} | --function={'|'.join(LOSSES)}")
+		eprintWrap(f"Loss, learning rate, and optimization function combination (optional; a = adam; aw = adamW; clr = cyclical learning rate; ed = epoch decay; lc =  logarithm of the hyperbolic cosine error; mse = mean squared error; sgd = stochastic gradient descent; default = {settings['lossFunction']}): -f {'|'.join(LOSSES)} | --function={'|'.join(LOSSES)}")
 		eprintWrap(f"Run on specified GPU (optional; default = {settings['gpu']}; CPU option overrides GPU settings): -g int | --gpu=int")
 		eprintWrap(f"Learning rate (optional; default = {settings['learningRate']}): -l float | --learning=float")
 		eprintWrap(modelError)
@@ -291,44 +291,24 @@ def epoch2decayLR(epoch, learningRate):
 	return learningRate*1.0/(1.0+(settings['learningRate']/settings['epochs'])*epoch)
 
 model = tf.keras.models.load_model(settings['model'], compile = False)
-
-
-
-# max_features = 2**10
-# embedding_dim = 8
-# inputs = tf.keras.Input(shape=(None,), dtype="int64")
-# x = tf.keras.layers.Embedding(max_features, embedding_dim)(inputs)
-# x = tf.keras.layers.Dropout(0.5)(x)
-# x = tf.keras.layers.Conv1D(embedding_dim, 7, padding="valid", activation="relu", strides=3)(x)
-# x = tf.keras.layers.Conv1D(embedding_dim, 7, padding="valid", activation="relu", strides=3)(x)
-# x = tf.keras.layers.GlobalMaxPooling1D()(x)
-# x = tf.keras.layers.Dense(embedding_dim, activation="relu")(x)
-# x = tf.keras.layers.Dropout(0.5)(x)
-# predictions = tf.keras.layers.Dense(1, activation="tanh", name="predictions")(x)
-# model = tf.keras.Model(inputs, predictions)
-
-
-
 eprint(model.summary())
 
 ### loss
 loss = None
-if settings['lossFunction'] in ('mae+clr+a', 'mae+clr+aw', 'mae+ed+aw', 'mae+clr+sgd'): 
-	loss = tf.keras.losses.MeanAbsoluteError(
-		name = 'mae',
-		reduction = tf.keras.losses.Reduction.AUTO
+if settings['lossFunction'] in ('lc+clr+a', 'lc+clr+aw', 'lc+ed+aw', 'lc+clr+sgd'): 
+	loss = tf.keras.losses.LogCosh(
+		reduction = tf.keras.losses.Reduction.SUM
 	)
 elif settings['lossFunction'] in  ('mse+clr+a', 'mse+clr+aw', 'mse+ed+aw', 'mse+clr+sgd'):
 	loss = tf.keras.losses.MeanSquaredError(
 		name = 'mse',
-		# reduction = tf.keras.losses.Reduction.AUTO
 		reduction = tf.keras.losses.Reduction.SUM_OVER_BATCH_SIZE
 	)
 
 ### metrics
 metrics = [
-	tf.keras.metrics.MeanAbsoluteError(
-		name = 'mae'
+	tf.keras.metrics.LogCoshError(
+		name = 'logcosh'
 	),
 	tf.keras.metrics.MeanSquaredError(
 		name = 'mse'
@@ -350,21 +330,21 @@ clr = tfa.optimizers.CyclicalLearningRate(
 	step_size = settings['clrStep']*settings['batch'] 
 )
 optimizer = None
-if settings['lossFunction'] in ('mae+clr+a', 'mse+clr+a'):
+if settings['lossFunction'] in ('lc+clr+a', 'mse+clr+a'):
 	optimizer = tf.keras.optimizers.Adam(
 		learning_rate = clr
 	)
-elif settings['lossFunction'] in ('mae+clr+aw', 'mse+clr+aw'):
+elif settings['lossFunction'] in ('lc+clr+aw', 'mse+clr+aw'):
 	optimizer = tfa.optimizers.AdamW(
 		learning_rate = clr,
 		weight_decay = settings['weightDecay']
 	)
-elif settings['lossFunction'] in ('mae+ed+aw', 'mse+ed+aw'):
+elif settings['lossFunction'] in ('lc+ed+aw', 'mse+ed+aw'):
 	optimizer = tfa.optimizers.AdamW(
 		learning_rate = settings['learningRate'], 
 		weight_decay = settings['weightDecay']
 	)
-elif settings['lossFunction'] in ('mae+clr+sgd', 'mse+clr+sgd'):
+elif settings['lossFunction'] in ('lc+clr+sgd', 'mse+clr+sgd'):
 	optimizer = tf.keras.optimizers.SGD(
 		learning_rate = clr
 	)
@@ -382,12 +362,12 @@ callbacks.append(tf.keras.callbacks.EarlyStopping(
 	baseline = None,
 	min_delta = 0,
 	mode = 'min',
-	monitor = f"val_{'mae' if settings['lossFunction'] in ('mae+clr+a', 'mae+clr+aw', 'mae+ed+aw', 'mae+clr+sgd') else 'mse'}",
+	monitor = f"val_{'logcosh' if settings['lossFunction'] in ('lc+clr+a', 'lc+clr+aw', 'lc+ed+aw', 'lc+clr+sgd') else 'mse'}",
 	patience = settings['leniency'],
 	restore_best_weights = True,
 	verbose = 0
 ))
-if settings['lossFunction'] in ('mae+ed+aw', 'mse+ed+aw'):
+if settings['lossFunction'] in ('lc+ed+aw', 'mse+ed+aw'):
 	callbacks.append(tf.keras.callbacks.LearningRateScheduler(epoch2decayLR))
 
 # for sample in validationData.take(2):

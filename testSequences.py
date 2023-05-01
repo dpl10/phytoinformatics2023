@@ -193,8 +193,8 @@ model.compile(
 		reduction = tf.keras.losses.Reduction.SUM_OVER_BATCH_SIZE
 	),
 	metrics = [
-		tf.keras.metrics.MeanAbsoluteError(
-			name = 'mae'
+		tf.keras.metrics.LogCoshError(
+			name = 'logcosh'
 		),
 		tf.keras.metrics.MeanSquaredError(
 			name = 'mse'
@@ -214,7 +214,7 @@ model.compile(
 eprint(model.summary())
 stats = model.evaluate(testData)
 print(f"Test loss: {stats[0]:.4f}")
-print(f"Test MAE: {(stats[1]):.4f}")
+print(f"Test LC: {(stats[1]):.4f}")
 print(f"Test MSE: {(stats[2]):.4f}")
 print(f"Test R^2: {(stats[3]):.4f}")
 sys.exit(0)
