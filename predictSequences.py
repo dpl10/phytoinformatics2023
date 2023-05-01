@@ -30,7 +30,6 @@ def wrap(string, columns = WRAP):
 
 ### USER SETTINGS
 settings = {}
-settings['batch'] = 64 
 settings['cpu'] = False
 settings['dataTest'] = ''
 settings['encoderUnits'] = 48
@@ -42,30 +41,32 @@ settings['sentencePieceModel'] = ''
 
 
 
+### OTHER SETTINGS
+settings['batch'] = 1 
+
+
+
 ### READ OPTIONS
 arrayError = 'Number of elements in the output array (required): -a int | --array=int'
 dataTestError = 'Input test data (required): -t file.tfr | --test file.tfr'
 modelError = 'Input model file (required): -m file.h5 | --model=file.h5'
 spmError = 'Input sentence piece model (required): -s model.pb | --spm=model.pb'
 try:
-	arguments, values = getopt.getopt(sys.argv[1:], 'a:b:cg:hm:p:s:t:u:', ['array=', 'batch=', 'cpu', 'gpu=', 'help', 'model=', 'processors=', 'spm=', 'test=', 'units='])
+	arguments, values = getopt.getopt(sys.argv[1:], 'a:cg:hm:p:s:t:u:', ['array=', 'cpu', 'gpu=', 'help', 'model=', 'processors=', 'spm=', 'test=', 'units='])
 except getopt.error as err:
 	eprintWrap(str(err))
 	sys.exit(2)
 for argument, value in arguments:
 	if argument in ('-a', '--array') and int(value) > 0:
 		settings['outputArray'] = int(value)
-	elif argument in ('-b', '--batch') and int(value) > 0:
-		settings['batch'] = int(value)
 	elif argument in ('-c', '--cpu'):
 		settings['cpu'] = True
 	elif argument in ('-g', '--gpu') and int(value) >= 0: ### does not test if device is valid
 		settings['gpu'] = value
 	elif argument in ('-h', '--help'):
 		eprint('')
-		eprintWrap('A Python3 script to test models on sequences from .tfr files with TensorFlow 2.12.0.')
+		eprintWrap('A Python3 script to predict from models using sequences in .tfr files with TensorFlow 2.12.0.')
 		eprintWrap(arrayError)
-		eprintWrap(f"Batch size (optional; default = {settings['batch']}): -b int | --batch=int")
 		eprintWrap(f"CPU only (optional; default = {not settings['cpu']}): -c | --cpu")
 		eprintWrap(f"Run on specified GPU (optional; default = {settings['gpu']}; CPU option overrides GPU settings): -g int | --gpu int")
 		eprintWrap(modelError)
@@ -185,7 +186,7 @@ testData = testData.map(
 
 
 
-### READ AND TEST
+### READ AND COMPILE MODEL
 model = tf.keras.models.load_model(settings['model'], compile = False)
 model.compile(
 	loss = tf.keras.losses.MeanSquaredError(
@@ -211,10 +212,16 @@ model.compile(
 		weight_decay = 0.001
 	)
 )
-eprint(model.summary())
-stats = model.evaluate(testData)
-print(f"Test loss: {stats[0]:.4f}")
-print(f"Test LC: {(stats[1]):.4f}")
-print(f"Test MSE: {(stats[2]):.4f}")
-print(f"Test R^2: {(stats[3]):.4f}")
+
+
+
+### PREDICT
+print('stabiltiy\tprediction')
+for sequence, stability in testData:
+	label = float(stability.numpy()[0])
+	prediction = float(model.predict(sequence, verbose = 0)[0])
+	print(f"{label:.2f}\t{prediction:.2f}")
+
+
+
 sys.exit(0)

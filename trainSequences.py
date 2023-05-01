@@ -101,7 +101,7 @@ for argument, value in arguments:
 		eprintWrap(f"CPU only (optional; default = {not settings['cpu']}): -c | --cpu")
 		eprintWrap(f"Weight decay for AdamW optimizer (optional; default = {settings['weightDecay']}): -d float | --decay=float")
 		eprintWrap(f"Number of epochs (optional; default = {settings['epochs']}): -e int | --epochs=int")
-		eprintWrap(f"Loss, learning rate, and optimization function combination (optional; a = adam; aw = adamW; clr = cyclical learning rate; ed = epoch decay; lc =  logarithm of the hyperbolic cosine error; mse = mean squared error; sgd = stochastic gradient descent; default = {settings['lossFunction']}): -f {'|'.join(LOSSES)} | --function={'|'.join(LOSSES)}")
+		eprintWrap(f"Loss, learning rate, and optimization function combination (optional; a = adam; aw = adamW; clr = cyclical learning rate; ed = epoch decay; lc = logarithm of the hyperbolic cosine error; mse = mean squared error; sgd = stochastic gradient descent; default = {settings['lossFunction']}): -f {'|'.join(LOSSES)} | --function={'|'.join(LOSSES)}")
 		eprintWrap(f"Run on specified GPU (optional; default = {settings['gpu']}; CPU option overrides GPU settings): -g int | --gpu=int")
 		eprintWrap(f"Learning rate (optional; default = {settings['learningRate']}): -l float | --learning=float")
 		eprintWrap(modelError)
