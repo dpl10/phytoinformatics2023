@@ -60,6 +60,7 @@ settings['weightDecay'] = 0.0001
 settings['analysisTime'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
 settings['clrInitial'] = 4 ### try 3
 settings['clrStep'] = 4 ### try 2-8
+settings['initializer'] = 'glorot_uniform'
 settings['leniency'] = 128
 settings['randomMax'] = 2**32 ### 64 is unsafe (53 is max safe)
 settings['randomMin'] = 0
@@ -291,7 +292,37 @@ def epoch2decayLR(epoch, learningRate):
 	return learningRate*1.0/(1.0+(settings['learningRate']/settings['epochs'])*epoch)
 
 model = tf.keras.models.load_model(settings['model'], compile = False)
-eprint(model.summary())
+modelTruncated = tf.keras.Model(inputs = model.input, outputs = model.layers[-2].output)
+output = tf.keras.layers.Dense(
+	activation = 'tanh',
+	activity_regularizer = None,
+	bias_constraint = None,
+	bias_initializer = 'zeros',
+	bias_regularizer = None,
+	kernel_constraint = None,
+	kernel_initializer = settings['initializer'],
+	kernel_regularizer = None,
+	name = 'output_dense',
+	units = settings['outputArray'],
+	use_bias = True
+)(modelTruncated.layers[-1].output)
+newModel = tf.keras.Model(inputs = modelTruncated.input, outputs = output)
+for layer in newModel.layers:
+	layer.trainable = False
+newModel.layers[-2].trainable = True
+newModel.layers[-1].trainable = True
+eprint(newModel.summary())
+
+#
+#
+#
+encoded = json.dumps(settings, ensure_ascii = False, indent = 3, sort_keys = True).encode()
+hexMD5 = hashlib.md5(encoded).hexdigest()
+newModel.save(os.path.join(settings['outputDirectory'], f"best-{hexMD5}", 'new-model.h5')) 
+#
+# 
+#
+
 
 ### loss
 loss = None
@@ -350,7 +381,7 @@ elif settings['lossFunction'] in ('lc+clr+sgd', 'mse+clr+sgd'):
 	)
 
 ### compile
-model.compile(
+newModel.compile(
 	loss = loss,
 	metrics = metrics,
 	optimizer = optimizer
@@ -375,7 +406,7 @@ if settings['lossFunction'] in ('lc+ed+aw', 'mse+ed+aw'):
 # 	print(sample[1])
 
 ### train
-history = model.fit(
+history = newModel.fit(
 	batch_size = settings['batch'],
 	callbacks = callbacks,
 	epochs = settings['epochs'],
@@ -386,7 +417,7 @@ history = model.fit(
 ### save
 encoded = json.dumps(settings, ensure_ascii = False, indent = 3, sort_keys = True).encode()
 hexMD5 = hashlib.md5(encoded).hexdigest()
-model.save(os.path.join(settings['outputDirectory'], f"best-{hexMD5}", 'best-model.h5')) 
+newModel.save(os.path.join(settings['outputDirectory'], f"best-{hexMD5}", 'best-model.h5')) 
 np.save(os.path.join(settings['outputDirectory'], f"best-{hexMD5}", 'training-history.npy'), history.history, allow_pickle = True) ### history = np.load('file', allow_pickle = True).item()
 with open(os.path.join(settings['outputDirectory'], f"best-{hexMD5}", 'training-settings.json'), 'w') as file:
 	print(encoded, file = file)

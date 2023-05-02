@@ -199,12 +199,12 @@ model.compile(
 		tf.keras.metrics.MeanSquaredError(
 			name = 'mse'
 		),
-		tfa.metrics.RSquare(
-			dtype = tf.float32,
-			multioutput = 'uniform_average',
-			name = 'r2',
-			num_regressors = 0
-		)
+		# tfa.metrics.RSquare(
+		# 	dtype = tf.float32,
+		# 	multioutput = 'uniform_average',
+		# 	name = 'r2',
+		# 	num_regressors = 0
+		# )
 	],
 	optimizer = tfa.optimizers.AdamW(
 		learning_rate = 0.01, 
@@ -216,5 +216,5 @@ stats = model.evaluate(testData)
 print(f"Test loss: {stats[0]:.4f}")
 print(f"Test LC: {(stats[1]):.4f}")
 print(f"Test MSE: {(stats[2]):.4f}")
-print(f"Test R^2: {(stats[3]):.4f}")
+# print(f"Test R^2: {(stats[3]):.4f}")
 sys.exit(0)
