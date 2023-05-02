@@ -65,7 +65,6 @@ settings['zoomPercent'] = 10.0
 
 
 ### OTHER SETTINGS
-settings['activation'] = 'selu'
 settings['analysisTime'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
 settings['clrInitial'] = 4 ### try 3
 settings['clrStep'] = 4 ### try 2-8
@@ -377,7 +376,7 @@ def epoch2decayLR(epoch, learningRate):
 model = tf.keras.models.load_model(settings['model'], compile = False)
 modelTruncated = tf.keras.Model(inputs = model.input, outputs = model.layers[-2].output)
 output = tf.keras.layers.Dense(
-	activation = settings['activation'],
+	activation = None,
 	activity_regularizer = None,
 	bias_constraint = None,
 	bias_initializer = 'zeros',
