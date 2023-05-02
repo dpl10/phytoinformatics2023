@@ -65,9 +65,11 @@ settings['zoomPercent'] = 10.0
 
 
 ### OTHER SETTINGS
+settings['activation'] = 'selu'
 settings['analysisTime'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
 settings['clrInitial'] = 4 ### try 3
 settings['clrStep'] = 4 ### try 2-8
+settings['initializer'] = 'glorot_uniform'
 settings['leniency'] = 128
 settings['randomMax'] = 2**32 ### 64 is unsafe (53 is max safe)
 settings['randomMin'] = 0
@@ -367,9 +369,6 @@ trainData = (
 )
 
 
-
-settings['activation'] = 'selu'
-settings['initializer'] = 'glorot_uniform'
 
 ### READ AND TRAIN MODEL
 def epoch2decayLR(epoch, learningRate):
