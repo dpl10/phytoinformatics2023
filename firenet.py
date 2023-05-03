@@ -69,7 +69,7 @@ for argument, value in arguments:
 		eprint('')
 		eprintWrap('A Python3 script to create a TensorFlow 2.9.3 reduced FireNet (DOI:10.1007/S11063-021-10555-1) model.')
 		eprintWrap(arrayError)
-		eprintWrap(f"Modify (arXiv:1907.02157) Fire Module (arXiv:1602.07360) 3x3 convolution to use depth-wise convolution (optional; default = {settings['depthwise']}): -d | -- depthwise")
+		eprintWrap(f"Modify (arXiv:1907.02157) Fire Module (arXiv:1602.07360) 3x3 convolution to use depth-wise convolution (optional; default = {settings['depthwise']}): -d | --depthwise")
 		eprintWrap(f"Internal activation function (optional; default = {settings['activation']}): -f {'|'.join(ACTIVATIONS)} | --function={'|'.join(ACTIVATIONS)}")
 		eprintWrap(f"Input image size (optional; default = {settings['inputSize']}): -i int | --input=int")
 		eprintWrap(outFileError)
