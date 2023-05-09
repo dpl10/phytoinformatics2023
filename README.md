@@ -71,3 +71,10 @@ The Graduate Center, City University of New York & New York Botanical Garden
    * [testSequences.py](testSequences.py)
    * [trainSequences.py](trainSequences.py)
    * [unigram-10.pb](unigram-10.pb)
+* week 15
+   * [lecture](phytoinformatics2023-week15.pdf)
+   * [laboratory](phytoinformatics2023-lab15.pdf)
+   * [deeplabFirenet.py](deeplabFirenet.py)
+   * IGN data [part 0](IGN-data0.tar) | [part 1](IGN-data1.tar) | [part 2](IGN-data2.tar) | [part 3](IGN-data3.tar) | [part 4](IGN-data4.tar) | [part 5](IGN-data5.tar) | [part 6](IGN-data6.tar)
+   * [testSegmentation.py](testSegmentation.py)
+   * [trainSegmentation.py](trainSegmentation.py)
